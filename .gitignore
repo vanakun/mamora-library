@@ -1,0 +1,32 @@
+# Laravel
+/vendor
+/node_modules
+/public/storage
+/storage/*.key
+/.phpunit.cache
+/.fleet
+
+# Environment files
+.env
+.env.*
+auth.json
+
+# Laravel Mix / Vite
+/public/hot
+/public/build
+
+# Debug logs
+npm-debug.log*
+yarn-error.log*
+
+# Homestead
+Homestead.yaml
+Homestead.json
+
+# IDEs and editors
+/.idea
+/.vscode
+
+# OS files
+.DS_Store
+Thumbs.db
