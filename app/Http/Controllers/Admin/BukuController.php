@@ -25,7 +25,7 @@ class BukuController extends Controller
     public function getData(Request $request)
     {
         if ($request->ajax()) {
-            $data = Buku::with('kategori')->get();
+            $data = Buku::with('kategori')->where('status', 'show')->get();
 
             return DataTables::of($data)
                 ->addIndexColumn()
@@ -163,9 +163,12 @@ class BukuController extends Controller
     // Hapus buku
     public function destroy(Buku $buku)
     {
-        $buku->delete();
-        return redirect()->route('admin.buku.index')->with('success', 'Buku berhasil dihapus.');
+    $buku->status = 'hidden';
+    $buku->save();
+
+    return redirect()->route('admin.buku.index')->with('success', 'Buku berhasil disembunyikan.');
     }
+
     
     public function import(Request $request)
     {

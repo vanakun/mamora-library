@@ -44,26 +44,30 @@ class PerpustakaanController extends Controller
                     ? \Carbon\Carbon::parse($pinjam->tanggal_kembali)->format('d-m-Y') 
                     : 'Belum Kembali';
             })
-            ->addColumn('status', function($pinjam) {
-                $statusHtml = '';
-                switch (strtolower($pinjam->status)) {
-                    case 'dipinjam':
-                        $statusHtml = '<span class="px-2 py-1 bg-yellow-200 text-yellow-800 text-sm rounded-full">Dipinjam</span>';
-                        $statusHtml .= ' <a href="' . route('peminjaman.updateStatus', $pinjam->id) . '" class="text-blue-600 font-semibold hover:underline">Kembalikan</a>';
-                        break;
-                    case 'dikembalikan':
-                        $statusHtml = '<span class="px-2 py-1 bg-green-200 text-green-800 text-sm rounded-full">Dikembalikan</span>';
-                        break;
-                    case 'menunggu admin':
-                        $statusHtml = '<span class="px-2 py-1 bg-red-200 text-red-800 text-sm rounded-full">Menunggu Dikembalikan</span>';
-                        break;
-                    default:
-                        $statusHtml = '<span class="px-2 py-1 bg-gray-200 text-gray-800 text-sm rounded-full">' . ucfirst($pinjam->status) . '</span>';
+            ->addColumn('status', function ($row) {
+                $status = $row->status ?? '-';
+                $color = '';
+            
+                // Ubah 'Menunggu_admin' menjadi 'Menunggu admin'
+                if (strtolower($status) === 'menunggu_admin') {
+                    $status = 'Menunggu';
                 }
-                return $statusHtml;
+            
+                if (strtolower($status) == 'dikembalikan') {
+                    $color = 'bg-green-200 text-green-800';
+                } elseif (strtolower($status) == 'dipinjam') {
+                    $color = 'bg-red-200 text-red-800';
+                } elseif (strtolower($status) == 'menunggu') {
+                    $color = 'bg-yellow-200 text-yellow-800';
+                } else {
+                    $color = 'bg-gray-200 text-gray-800';
+                }
+            
+                return '<span class="px-3 py-1 rounded text-sm font-semibold ' . $color . '">' . ucfirst($status) . '</span>';
             })
             ->rawColumns(['status']) // penting agar HTML-nya bisa dirender
             ->make(true);
+            
     }
 
     public function updateStatus($id)

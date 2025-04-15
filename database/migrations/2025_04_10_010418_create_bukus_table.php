@@ -17,7 +17,8 @@ return new class extends Migration {
             $table->string('penulis');
             $table->year('tahun_terbit');
             $table->unsignedInteger('stok');
-            $table->string('gambar')->nullable(); // Menyimpan path gambar buku
+            $table->string('gambar')->nullable();
+            $table->enum('status', ['show', 'hidden',])->default('show');
             $table->timestamps();
         });
     }

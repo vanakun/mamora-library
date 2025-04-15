@@ -93,33 +93,52 @@ public function data()
         })
         ->addColumn('aksi', function ($row) {
             $action = '<div class="flex flex-col md:flex-row gap-2">';
-
+        
+            // Tombol Lihat Buku
+            $action .= '
+                <button 
+                    class="lihat-buku-btn px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm transition text-center"
+                    data-judul="' . e($row->buku->judul) . '"
+                    data-penulis="' . e($row->buku->penulis) . '"
+                    data-tahun="' . e($row->buku->tahun_terbit) . '"
+                    data-deskripsi="' . e($row->buku->deskripsi) . '"
+                >
+                    📘
+                </button>
+            ';
+        
+            // Tombol Kembalikan (hanya jika status 'menunggu_admin')
             if ($row->status === 'menunggu_admin') {
                 $action .= '
                     <a href="' . route('peminjamans.kembalikan', $row->id) . '" 
                        onclick="return confirm(\'Yakin ingin mengembalikan buku ini?\')"
                        class="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 text-sm transition text-center">
-                       🔄 Kembalikan
+                       🔄
                     </a>';
             }
-
+        
+            // Tombol Edit
             $action .= '
                 <a href="' . route('peminjamans.edit', $row->id) . '" 
                    class="px-3 py-1 bg-yellow-400 text-white rounded hover:bg-yellow-500 text-sm transition text-center">
-                   ✏️ Edit
-                </a>
+                   ✏️
+                </a>';
+        
+            // Tombol Hapus
+            $action .= '
                 <form action="' . route('peminjamans.destroy', $row->id) . '" method="POST" 
                       onsubmit="return confirm(\'Yakin ingin menghapus?\')" class="inline">
                     ' . csrf_field() . method_field('DELETE') . '
                     <button type="submit" 
                             class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-sm transition w-full text-center">
-                        🗑️ Hapus
+                        🗑️
                     </button>
                 </form>
             </div>';
-
+        
             return $action;
         })
+        
         ->editColumn('tanggal_pinjam', function ($row) {
             return \Carbon\Carbon::parse($row->tanggal_pinjam)->translatedFormat('d F Y');
         })

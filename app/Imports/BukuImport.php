@@ -30,6 +30,7 @@ class BukuImport implements ToModel
             'tahun_terbit'  => $row[3],
             'stok'          => $row[4],
             'kategori_id'   => $kategori->id,
+            'status'          => $row[6],
         ]);
     }
 }

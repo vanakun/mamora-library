@@ -43,8 +43,20 @@
                 Tambah Peminjaman
             </a>
 
-           
-
+            <!-- Modal Detail Buku -->
+            <div 
+                id="buku-modal" 
+                class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50 hidden"
+            >
+                <div class="bg-white rounded-lg shadow-xl w-96 p-6 relative">
+                    <h2 class="text-lg font-bold mb-4">Detail Buku</h2>
+                    <p><strong>Judul:</strong> <span id="modal-judul"></span></p>
+                    <p><strong>Penulis:</strong> <span id="modal-penulis"></span></p>
+                    <p><strong>Tahun Terbit:</strong> <span id="modal-tahun"></span></p>
+                   
+                    <button id="close-modal" class="absolute top-2 right-2 text-gray-600 hover:text-red-500">&times;</button>
+                </div>
+            </div>
             <div class="mt-4 bg-white p-5 rounded shadow overflow-x-auto">
                 <table id="peminjamans-table" class="min-w-full divide-y divide-gray-300 text-sm">
                     <thead class="bg-gray-100 border-b border-gray-300">
@@ -135,6 +147,25 @@
                     $('.dataTables_info').addClass('mt-4 text-sm text-gray-600');
                 }
             });
+        });
+    </script>
+    <script>
+        $(document).on('click', '.lihat-buku-btn', function () {
+            $('#modal-judul').text($(this).data('judul'));
+            $('#modal-penulis').text($(this).data('penulis'));
+            $('#modal-tahun').text($(this).data('tahun'));
+            $('#buku-modal').removeClass('hidden');
+        });
+
+        $('#close-modal').on('click', function () {
+            $('#buku-modal').addClass('hidden');
+        });
+
+        // Tutup modal saat klik di luar kontennya
+        $('#buku-modal').on('click', function (e) {
+            if (e.target === this) {
+                $(this).addClass('hidden');
+            }
         });
     </script>
 </x-app-layout>
