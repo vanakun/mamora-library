@@ -1,6 +1,7 @@
 <x-app-layout>
     <!-- AlpineJS -->
     <script src="//unpkg.com/alpinejs" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <!-- Wrapper -->
     <div x-data="{ sidebarOpen: false }" class="min-h-screen flex bg-gray-100">
@@ -48,20 +49,26 @@
             </form>
 
            
-            @if(session('success'))
-            <div id="success-alert" class="mb-4 px-4 py-3 rounded bg-green-100 text-green-800 border border-green-300">
-                {{ session('success') }}
-            </div>
+            @if (session('success'))
+    <script>
+        Swal.fire({
+            icon: 'success',
+            title: 'Sukses!',
+            text: '{{ session('success') }}'
+        });
+    </script>
+@endif
 
-            <script>
-                setTimeout(function() {
-                    const alert = document.getElementById('success-alert');
-                    if (alert) {
-                        alert.style.display = 'none';
-                    }
-                }, 3000); 
-            </script>
-            @endif
+@if (session('error'))
+    <script>
+        Swal.fire({
+            icon: 'error',
+            title: 'Gagal!',
+            text: '{{ session('error') }}'
+        });
+    </script>
+@endif
+
 
             <!-- Table Section -->
             <div class="bg-white p-5 rounded shadow overflow-x-auto">

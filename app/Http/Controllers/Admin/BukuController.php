@@ -166,17 +166,20 @@ class BukuController extends Controller
         $buku->delete();
         return redirect()->route('admin.buku.index')->with('success', 'Buku berhasil dihapus.');
     }
-
+    
     public function import(Request $request)
     {
-    $request->validate([
-        'file' => 'required|mimes:xls,xlsx'
-    ]);
+        try {
+            $import = new \App\Imports\BukuImport;
+            \Maatwebsite\Excel\Facades\Excel::import($import, $request->file('file'));
 
-    Excel::import(new BukuImport, $request->file('file'));
+            if ($import->emptyRowCount > 0) {
+                return redirect()->back()->with('error', "{$import->emptyRowCount} baris kosong ditemukan dan tidak diimpor ke database.");
+            }
 
-    return redirect()->back()->with('success', 'Data berhasil diimpor.');
-
+            return redirect()->back()->with('success', 'Impor buku berhasil!');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat impor: ' . $e->getMessage());
+        }
     }
-
 }

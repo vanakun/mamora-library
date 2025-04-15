@@ -64,17 +64,25 @@ public function data()
         ->addColumn('status', function ($row) {
             $status = $row->status ?? '-';
             $color = '';
-
+        
+            // Ubah 'Menunggu_admin' menjadi 'Menunggu admin'
+            if (strtolower($status) === 'menunggu_admin') {
+                $status = 'Menunggu';
+            }
+        
             if (strtolower($status) == 'dikembalikan') {
                 $color = 'bg-green-200 text-green-800';
             } elseif (strtolower($status) == 'dipinjam') {
                 $color = 'bg-red-200 text-red-800';
+            } elseif (strtolower($status) == 'menunggu') {
+                $color = 'bg-yellow-200 text-yellow-800';
             } else {
                 $color = 'bg-gray-200 text-gray-800';
             }
-
+        
             return '<span class="px-3 py-1 rounded text-sm font-semibold ' . $color . '">' . ucfirst($status) . '</span>';
         })
+        
         ->addColumn('tanggal_kembali_final', function ($row) {
             return $row->tanggal_kembali_final
                 ? \Carbon\Carbon::parse($row->tanggal_kembali_final)->translatedFormat('d F Y')

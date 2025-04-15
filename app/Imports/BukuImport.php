@@ -7,12 +7,18 @@ use Maatwebsite\Excel\Concerns\ToModel;
 
 class BukuImport implements ToModel
 {
+    public $emptyRowCount = 0; // <--- Penting! Tambahkan properti ini
+
     public function model(array $row)
     {
-        // Cari kategori berdasarkan nama
+        // Jika baris kosong
+        if (empty(array_filter($row))) {
+            $this->emptyRowCount++;
+            return null;
+        }
+
         $kategori = Kategori::where('nama', $row[5])->first();
 
-        // Jika tidak ditemukan, bisa dilewati atau dibuat default
         if (!$kategori) {
             return null;
         }
