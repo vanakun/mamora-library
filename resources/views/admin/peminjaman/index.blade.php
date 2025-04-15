@@ -17,6 +17,23 @@
 
         <!-- Main Content -->
         <div class="w-full pt-[20px] pl-[20px] pr-[20px]">
+            
+        @if(session('success'))
+            <div id="success-alert" class="mb-4 px-4 py-3 rounded bg-green-100 text-green-800 border border-green-300">
+                {{ session('success') }}
+            </div>
+
+            <script>
+                setTimeout(function() {
+                    const alert = document.getElementById('success-alert');
+                    if (alert) {
+                        alert.style.display = 'none';
+                    }
+                }, 3000); // 3000 milidetik = 3 detik
+            </script>
+        @endif
+
+
         <a href="{{ route('peminjamans.create') }}"
             class="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white text-sm font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-300">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
@@ -25,6 +42,9 @@
                 </svg>
                 Tambah Peminjaman
             </a>
+
+           
+
             <div class="mt-4 bg-white p-5 rounded shadow overflow-x-auto">
                 <table id="peminjamans-table" class="min-w-full divide-y divide-gray-300 text-sm">
                     <thead class="bg-gray-100 border-b border-gray-300">

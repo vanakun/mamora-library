@@ -25,7 +25,7 @@
                 <form action="{{ route('peminjamans.update', $peminjaman->id) }}" method="POST">
                     @csrf
                     @method('PUT')
-
+                  
                     <div class="mb-4">
                         <label class="block font-medium text-gray-700">Nama Peminjam</label>
                         <input type="text" value="{{ $peminjaman->user->name }}" readonly
@@ -60,6 +60,7 @@
                             class="mt-1 block w-full border border-gray-300 rounded px-3 py-2 bg-gray-100 text-gray-700 cursor-not-allowed" />
                     </div>
 
+                    
                     <div class="flex justify-between">
                         <a href="{{ route('peminjamans.index') }}" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded">Batal</a>
                         <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">Simpan</button>
@@ -68,4 +69,5 @@
             </div>
         </div>
     </div>
+   
 </x-app-layout>

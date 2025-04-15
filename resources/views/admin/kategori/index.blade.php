@@ -3,7 +3,11 @@
         @include('partials.sidebar')
 
         <div class="flex-1 p-6">
-         
+            @if(session('successupdate'))
+                <div class="mb-4 px-4 py-3 rounded bg-green-100 text-green-800 border border-green-300">
+                    {{ session('successupdate') }}
+                </div>
+            @endif
 
             <div id="alert-box" class="hidden mb-4 p-4 rounded text-white text-sm"></div>
 

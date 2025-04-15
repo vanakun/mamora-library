@@ -158,7 +158,6 @@ public function data()
 
     public function store(Request $request)
     {
-        // Validasi inputan
         $request->validate([
             'user_id' => 'required|exists:users,id',
             'buku_id' => 'required|exists:bukus,id',
@@ -166,33 +165,38 @@ public function data()
             'tanggal_kembali' => 'nullable|date|after_or_equal:tanggal_pinjam',
         ]);
     
-        $bulan = Carbon::now()->format('m');
-        $tahun = Carbon::now()->format('Y');
-    
-        // Menghitung jumlah peminjaman pada bulan dan tahun yang sama
-        $count = Peminjaman::whereMonth('created_at', $bulan)
-            ->whereYear('created_at', $tahun)
-            ->count() + 1;
-    
-        // Membuat kode pinjam yang unik
-        $kodePinjam = str_pad($count, 4, '0', STR_PAD_LEFT) . '/' . $bulan . '/' . $tahun;
-    
-        // Menentukan tanggal kembali (jika tidak diisi, otomatis +10 hari dari tanggal pinjam)
         $tanggalPinjam = Carbon::parse($request->tanggal_pinjam);
         $tanggalKembali = $request->tanggal_kembali
             ? Carbon::parse($request->tanggal_kembali)
             : $tanggalPinjam->copy()->addDays(10);
     
-        // Cari buku berdasarkan ID yang dipinjam
         $buku = Buku::find($request->buku_id);
-    
-        // Validasi apakah stok buku cukup
         if ($buku->stok <= 0) {
-            // Jika stok buku habis, arahkan kembali ke form peminjaman dengan pesan error
             return redirect()->route('peminjamans.create')->with('error', 'Stok buku tidak mencukupi.');
         }
     
-        // Jika stok cukup, lanjutkan dengan peminjaman
+        // Dapatkan bulan dan tahun
+        $bulan = $tanggalPinjam->format('m');
+        $tahun = $tanggalPinjam->format('Y');
+    
+        // Cari kode terakhir di bulan dan tahun yang sama
+        $lastKode = Peminjaman::whereMonth('created_at', $bulan)
+            ->whereYear('created_at', $tahun)
+            ->orderBy('created_at', 'desc')
+            ->value('kode_pinjam');
+    
+        if ($lastKode) {
+            // Ambil angka depan dari format XXXX/MM/YYYY
+            $lastNumber = (int) explode('/', $lastKode)[0];
+            $nextNumber = $lastNumber + 1;
+        } else {
+            $nextNumber = 1;
+        }
+    
+        // Format kode
+        $kodePinjam = str_pad($nextNumber, 4, '0', STR_PAD_LEFT) . '/' . $bulan . '/' . $tahun;
+    
+        // Simpan
         Peminjaman::create([
             'user_id' => $request->user_id,
             'buku_id' => $request->buku_id,
@@ -203,11 +207,9 @@ public function data()
             'denda' => 0,
         ]);
     
-        // Kurangi stok buku setelah peminjaman
         $buku->stok -= 1;
         $buku->save();
     
-        // Redirect ke halaman peminjaman dengan pesan sukses
         return redirect()->route('peminjamans.index')->with('success', 'Peminjaman berhasil ditambahkan.');
     }
     
@@ -255,15 +257,14 @@ public function data()
 
     $peminjaman->save();
 
-    return redirect()->route('peminjamans.index')
-        ->with('success', 'Data peminjaman berhasil diperbarui.');
+    return redirect()->route('peminjamans.index')->with('success', 'Data peminjaman berhasil diperbarui.');
 }
 
     public function destroy(Peminjaman $peminjaman)
     {
         $peminjaman->delete();
 
-        return redirect()->route('admin.peminjaman.index')
+        return redirect()->route('peminjamans.index')
             ->with('success', 'Data peminjaman berhasil dihapus.');
     }
 }

@@ -4,7 +4,7 @@
 
     <!-- Wrapper -->
     <div x-data="{ sidebarOpen: false }" class="min-h-screen flex bg-gray-100">
-
+        
         <!-- Sidebar -->
         @include('partials.sidebar')
 
@@ -14,34 +14,54 @@
         </div>
 
         <!-- Main Content -->
-        <div class="w-full pt-[20px] pl-[20px] pr-[20px]">
-        <div class="inline-flex items-center gap-2">
-    <!-- Tambah Buku Button -->
-    <a href="{{ route('admin.bukus.create') }}"
-       class="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white text-sm font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-300">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
-        </svg>
-        Tambah Buku
-    </a>
-
-    <!-- Import Excel Button -->
-    <a href="#" onclick="document.getElementById('importExcel').click()"
-       class="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-yellow-600 to-yellow-500 hover:from-yellow-700 hover:to-yellow-600 text-white text-sm font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-300">
-        📁 Import Excel
-    </a>
-</div>
-
-
-<!-- Form Import Excel (Hidden) -->
-<form id="excelImportForm" action="{{ route('admin.bukus.import') }}" method="POST" enctype="multipart/form-data" class="hidden">
-    @csrf
-    <input type="file" name="file" id="importExcel" accept=".xlsx, .xls" onchange="document.getElementById('excelImportForm').submit();">
-</form>
-
+        <div class="w-full pt-5 px-5">
             
-            <div class="mt-4 bg-white p-5 rounded shadow overflow-x-auto">
-                <!-- Table Buku -->
+            <!-- Action Buttons -->
+            <div class="inline-flex items-center gap-2 mb-4">
+                <!-- Tambah Buku Button -->
+                <a href="{{ route('admin.bukus.create') }}"
+                   class="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white text-sm font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                    </svg>
+                    Tambah Buku
+                </a>
+
+                <!-- Download Template -->
+                <a href="/storage/data-import.xlsx"
+                   onclick="alert('Template sedang diunduh...')"
+                   class="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-red-600 to-yellow-500 hover:from-yellow-700 hover:to-yellow-600 text-white text-sm font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-300">
+                    📁 Base template
+                </a>
+
+                <!-- Import Excel Button -->
+                <a href="#" onclick="document.getElementById('importExcel').click()"
+                   class="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-yellow-600 to-yellow-500 hover:from-yellow-700 hover:to-yellow-600 text-white text-sm font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-300">
+                    📁 Import Excel
+                </a>
+            </div>
+
+            <!-- Form Import Excel (Hidden) -->
+            <form id="excelImportForm" action="{{ route('admin.bukus.import') }}" method="POST" enctype="multipart/form-data" class="hidden">
+                @csrf
+                <input type="file" name="file" id="importExcel" accept=".xlsx, .xls" onchange="document.getElementById('excelImportForm').submit();">
+            </form>
+
+            <!-- Alert Messages -->
+            @if(session('success'))
+                <div class="mb-4 px-4 py-3 rounded bg-green-100 text-green-800 border border-green-300">
+                    {{ session('success') }}
+                </div>
+            @endif
+
+            @if(session('error'))
+                <div class="mb-4 px-4 py-3 rounded bg-red-100 text-red-800 border border-red-300">
+                    {{ session('error') }}
+                </div>
+            @endif
+
+            <!-- Table Section -->
+            <div class="bg-white p-5 rounded shadow overflow-x-auto">
                 <table id="bukuTable" class="min-w-full divide-y divide-gray-300 text-sm">
                     <thead class="bg-gray-100 border-b border-gray-300">
                         <tr>
@@ -56,15 +76,14 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- Data -->
+                        <!-- DataTable will populate data -->
                     </tbody>
                 </table>
             </div>
         </div>
-
     </div>
 
-    <!-- Add the required JS libraries for DataTables and Export functionality -->
+    <!-- JS Libraries -->
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.3.4/js/dataTables.buttons.min.js"></script>
@@ -75,6 +94,7 @@
     <script src="https://cdn.datatables.net/buttons/2.3.4/js/buttons.html5.min.js"></script> 
     <script src="https://cdn.datatables.net/buttons/2.3.4/js/buttons.print.min.js"></script> 
 
+    <!-- DataTables Init -->
     <script>
         $(document).ready(function() {
             $('#bukuTable').DataTable({
@@ -84,7 +104,7 @@
                 columns: [
                     { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
                     { data: 'judul', name: 'judul' },
-                    { data: 'gambar', name: 'gambar', orderable: false, searchable: false }, // Kolom Gambar
+                    { data: 'gambar', name: 'gambar', orderable: false, searchable: false },
                     { data: 'penulis', name: 'penulis' },
                     { data: 'tahun_terbit', name: 'tahun_terbit' },
                     { data: 'stok', name: 'stok' },
@@ -95,27 +115,23 @@
                     url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/id.json'
                 },
                 pageLength: 4,
-                dom: 'Bfrtip',  // B = Buttons, f = filter, t = table, p = pagination, i = info
+                dom: 'Bfrtip',
                 buttons: [
                     {
                         extend: 'excelHtml5',
                         text: 'Export Excel',
                         className: 'px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700',
                         title: 'Data Buku',
-                        exportOptions: {
-                            columns: [0, 1, 3, 4, 5, 6,]  // Menyertakan semua kolom yang terlihat
-                        }
+                        exportOptions: { columns: [0, 1, 3, 4, 5, 6] }
                     },
                     {
                         extend: 'pdfHtml5',
                         text: 'Export PDF',
                         className: 'px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700',
                         title: 'Data Buku',
-                        orientation: 'landscape', // agar tabel lebar muat
+                        orientation: 'landscape',
                         pageSize: 'A4',
-                        exportOptions: {
-                            columns: [0, 1, 3, 4, 5, 6]
-                        },
+                        exportOptions: { columns: [0, 1, 3, 4, 5, 6] },
                         customize: function (doc) {
                             doc.styles.tableHeader = {
                                 fillColor: '#4B5563',
@@ -124,14 +140,11 @@
                                 bold: true,
                                 fontSize: 10
                             };
-
                             doc.styles.title = {
                                 alignment: 'center',
                                 fontSize: 14,
                                 bold: true
                             };
-
-                            // Set layout table
                             doc.content[1].layout = {
                                 hLineWidth: function () { return 0.5; },
                                 vLineWidth: function () { return 0.5; },
@@ -146,8 +159,6 @@
                             doc.content[1].table.widths = Array(columnCount).fill('*');
                         }
                     }
-
-
                 ],
                 drawCallback: function () {
                     $('.dataTables_wrapper').addClass('p-5');
@@ -160,5 +171,4 @@
             });
         });
     </script>
-
 </x-app-layout>

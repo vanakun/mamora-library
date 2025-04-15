@@ -180,7 +180,10 @@ class BukuController extends Controller
 
     Excel::import(new BukuImport, $request->file('file'));
 
-    return redirect()->back()->with('success', 'Data buku berhasil diimport.');
+    return redirect()->back()->with('success', 'Data berhasil diimpor.');
+
+    // Jika gagal
+    return redirect()->back()->with('error', 'Terjadi kesalahan saat mengimpor data.');
 }
 
 }

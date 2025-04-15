@@ -53,7 +53,7 @@ class KategoriController extends Controller
             'nama' => $request->nama,
         ]);
 
-        return response()->json(['message' => 'Kategori berhasil ditambahkan.']);
+        return response()->json(['message' => 'Kategori berhasil ditambah']);
     }
 
     public function update(Request $request, $id)
@@ -67,7 +67,8 @@ class KategoriController extends Controller
             'nama' => $request->nama,
         ]);
 
-        return response()->json(['message' => 'Kategori berhasil diperbarui.']);
+        return redirect()->route('kategoris.index')->with('successupdate', 'kategori berhasil diupdate!');
+        
     }
 
     public function show($id)
