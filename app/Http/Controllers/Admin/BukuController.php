@@ -23,62 +23,57 @@ class BukuController extends Controller
     }
   
     public function getData(Request $request)
-{
-    if ($request->ajax()) {
-        $data = Buku::with('kategori')->get();
+    {
+        if ($request->ajax()) {
+            $data = Buku::with('kategori')->get();
 
-        return DataTables::of($data)
-            ->addIndexColumn()
+            return DataTables::of($data)
+                ->addIndexColumn()
 
-            // Kolom kategori
-            ->addColumn('kategori', function ($row) {
-                return $row->kategori ? $row->kategori->nama : '-';
-            })
+                // Kolom kategori
+                ->addColumn('kategori', function ($row) {
+                    return $row->kategori ? $row->kategori->nama : '-';
+                })
 
-            // Kolom gambar
-            ->addColumn('gambar', function ($row) {
-                if ($row->gambar) {
-                    $url = asset('storage/gambar_buku/' . $row->gambar);
-                    return '<img src="' . $url . '" class="w-16 h-20 object-cover rounded shadow">';
-                }
-                return '<span class="text-gray-400 italic">Tidak ada</span>';
-            })
+                // Kolom gambar
+                ->addColumn('gambar', function ($row) {
+                    if ($row->gambar) {
+                        $url = asset('storage/gambar_buku/' . $row->gambar);
+                        return '<img src="' . $url . '" class="w-16 h-20 object-cover rounded shadow">';
+                    }
+                    return '<span class="text-gray-400 italic">Tidak ada</span>';
+                })
 
-            // Kolom aksi
-            ->addColumn('action', function ($row) {
-                $editUrl = route('bukus.edit', $row->id);
-                $deleteUrl = route('bukus.destroy', $row->id);
+                // Kolom aksi
+                ->addColumn('action', function ($row) {
+                    $editUrl = route('bukus.edit', $row->id);
+                    $deleteUrl = route('bukus.destroy', $row->id);
 
-                return '
-                    <div class="flex gap-2 justify-center">
-                        <a href="' . $editUrl . '" 
-                            class="inline-flex items-center gap-1 px-3 py-1.5 bg-yellow-500 hover:bg-yellow-600 text-white text-xs font-semibold rounded shadow transition duration-300">
-                            ✏️ Edit
-                        </a>
+                    return '
+                        <div class="flex gap-2 justify-center">
+                            <a href="' . $editUrl . '" 
+                                class="inline-flex items-center gap-1 px-3 py-1.5 bg-yellow-500 hover:bg-yellow-600 text-white text-xs font-semibold rounded shadow transition duration-300">
+                                ✏️ Edit
+                            </a>
 
-                        <form action="' . $deleteUrl . '" method="POST" onsubmit="return confirm(\'Yakin ingin menghapus?\');">
-                            ' . csrf_field() . method_field('DELETE') . '
-                            <button type="submit"
-                                class="inline-flex items-center gap-1 px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-semibold rounded shadow transition duration-300">
-                                🗑️ Hapus
-                            </button>
-                        </form>
-                    </div>
-                ';
-            })
+                            <form action="' . $deleteUrl . '" method="POST" onsubmit="return confirm(\'Yakin ingin menghapus?\');">
+                                ' . csrf_field() . method_field('DELETE') . '
+                                <button type="submit"
+                                    class="inline-flex items-center gap-1 px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-semibold rounded shadow transition duration-300">
+                                    🗑️ Hapus
+                                </button>
+                            </form>
+                        </div>
+                    ';
+                })
 
-            // Raw HTML
-            ->rawColumns(['gambar', 'action'])
+                // Raw HTML
+                ->rawColumns(['gambar', 'action'])
 
-            ->make(true);
+                ->make(true);
+        }
     }
-}
 
-    
-   
-   
-    
-    
     // Tampilkan form tambah buku
     public function create()
     {
@@ -125,11 +120,9 @@ class BukuController extends Controller
     // Tampilkan form edit
     public function edit($id)
     {
-        // Get the book and the categories
         $buku = Buku::findOrFail($id);
-        $kategoris = Kategori::all(); // Assuming you have a Kategori model
+        $kategoris = Kategori::all();
 
-        // Return the edit view with the book data and categories
         return view('admin.buku.edit', compact('buku', 'kategoris'));
     }
 

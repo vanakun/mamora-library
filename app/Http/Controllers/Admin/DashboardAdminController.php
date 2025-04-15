@@ -15,12 +15,11 @@ class DashboardAdminController extends Controller
 {
     public function index()
     {
-        
         return view('admin.dashboard', [
             'jumlahUser' => User::role('user')->count(),
             'jumlahBuku' => Buku::count(),
             'totalKategoris' => Kategori::count(),
-            'jumlahPeminjaman' => Peminjaman::count(),
+            'jumlahPeminjaman' => Peminjaman::where('status', 'dikembalikan')->count(),
         ]);
     }
 
@@ -54,9 +53,11 @@ class DashboardAdminController extends Controller
             ->orderByDesc('total_borrowed')
             ->get();
     
-        $bukuLabels = $dataPeminjamanBuku->pluck('judul');  // Titles of the books
-        $peminjamanValues = $dataPeminjamanBuku->pluck('total_borrowed');  // Count of borrowings per book
+        $bukuLabels = $dataPeminjamanBuku->pluck('judul');  //judul
+        $peminjamanValues = $dataPeminjamanBuku->pluck('total_borrowed');
     
+        
+
         // Mengembalikan data dalam format JSON
         return response()->json([
             'labels' => $labels,

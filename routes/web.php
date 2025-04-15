@@ -65,13 +65,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Halaman khusus user
     Route::middleware(['role:user'])->group(function () {
+
         //Api User
         Route::get('user/perpustakaan/buku-list', [PerpustakaanController::class, 'getBukuList'])->name('getBukuList');
         Route::get('peminjaman/data', [PerpustakaanController::class, 'data'])->name('peminjaman.data');
 
+        //Dashboard User
         Route::get('user/perpustakaan', [PerpustakaanController::class, 'index'])->name('user.dashboard');
         Route::get('user/perpustakaan/all-buku', [PerpustakaanController::class, 'ShowMore'])->name('user.ShowMore');
        
+        //Peminjaman User
         Route::get('user/peminjaman/update-status/{id}', [PerpustakaanController::class, 'updateStatus'])->name('peminjaman.updateStatus');
         Route::post('user/perpustakaan/pinjam/{id}', [PerpustakaanController::class, 'pinjam'])->name('peminjaman.pinjam');
         Route::get('user/perpustakaan/riwayat', [PerpustakaanController::class, 'riwayat'])->name('peminjaman.riwayat');
