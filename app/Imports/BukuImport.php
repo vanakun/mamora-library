@@ -14,7 +14,7 @@ class BukuImport implements ToModel
 
         // Jika tidak ditemukan, bisa dilewati atau dibuat default
         if (!$kategori) {
-            return null; // skip baris ini
+            return null;
         }
 
         return new Buku([

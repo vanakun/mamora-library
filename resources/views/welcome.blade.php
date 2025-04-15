@@ -25,9 +25,9 @@
     $dashboardUrl = '#'; // default kalau role tidak terdeteksi
 
     if ($user->hasRole('admin')) {
-        $dashboardUrl = url('/admin');
+        $dashboardUrl = url('/dashboard');
     } elseif ($user->hasRole('user')) {
-        $dashboardUrl = url('/user');
+        $dashboardUrl = url('user/perpustakaan');
     }
 @endphp
 

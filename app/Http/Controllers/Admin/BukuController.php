@@ -134,8 +134,8 @@ class BukuController extends Controller
         'penulis' => 'required|string|max:255',
         'tahun_terbit' => 'required|numeric',
         'stok' => 'required|numeric',
-        'kategori_id' => 'required|exists:kategoris,id', // Validasi kategori yang dipilih
-        'gambar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Validasi gambar
+        'kategori_id' => 'required|exists:kategoris,id',
+        'gambar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
     ]);
 
     // Jika ada gambar baru, upload dan simpan pathnya
