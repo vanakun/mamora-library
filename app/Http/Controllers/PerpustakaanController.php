@@ -79,61 +79,53 @@ public function updateStatus($id)
 
     $peminjaman->save();
 
-    return redirect()->route('user.dashboard')->with('success', 'Status peminjaman telah diubah.');
+    return redirect()->route('user.dashboard')->with('success', 'Peminjaman Berhasil');
 }
     
+public function pinjam($id)
+{
+    $buku = Buku::findOrFail($id);
 
-    public function pinjam($id)
-    {
-        $buku = Buku::findOrFail($id);
-    
-        if ($buku->stok < 1) {
-            return back()->with('error', 'Stok buku tidak tersedia.');
-        }
-    
-        // Hitung nomor urut berdasarkan bulan dan tahun ini
-        $bulan = Carbon::now()->format('m');
-        $tahun = Carbon::now()->format('Y');
-        $count = Peminjaman::whereMonth('created_at', $bulan)
-                           ->whereYear('created_at', $tahun)
-                           ->count() + 1;
-    
-        // Format kode: 0001/04/2025
-        $kode_pinjam = str_pad($count, 4, '0', STR_PAD_LEFT) . '/' . $bulan . '/' . $tahun;
-    
-        // Simpan data peminjaman
-        Peminjaman::create([
-            'user_id' => Auth::id(),
-            'buku_id' => $buku->id,
-            'kode_pinjam' => $kode_pinjam,
-            'tanggal_pinjam' => Carbon::now(),
-            'tanggal_kembali' => Carbon::now()->addDays(10),
-            'status' => 'dipinjam',
-        ]);
-    
-        // Kurangi stok buku
-        $buku->decrement('stok');
-    
-        return back()->with('success', 'Buku berhasil dipinjam.');
+    if ($buku->stok < 1) {
+        return back()->with('error', 'Stok buku tidak tersedia.');
     }
-    public function ubahStatus($id)
-    {
-        $peminjaman = Peminjaman::findOrFail($id);
-    
-        if ($peminjaman->user_id !== auth()->id()) {
-            return back()->with('error', 'Anda tidak berhak mengubah status ini.');
-        }
-    
-        if ($peminjaman->status !== 'dipinjam') {
-            return back()->with('error', 'Status hanya bisa diubah dari "Dipinjam".');
-        }
-    
-        $peminjaman->status = 'menunggu dikembalikan';
-        $peminjaman->save();
-    
-        return back()->with('success', 'Status berhasil diubah menjadi Menunggu Dikembalikan.');
+
+    $bulan = Carbon::now()->month;
+    $tahun = Carbon::now()->year;
+
+    // Ambil kode_pinjam terakhir di bulan & tahun ini
+    $lastPeminjaman = Peminjaman::whereMonth('created_at', $bulan)
+                                ->whereYear('created_at', $tahun)
+                                ->orderBy('kode_pinjam', 'desc')
+                                ->first();
+
+    if ($lastPeminjaman) {
+        // Ambil angka depannya (misal "0005" dari "0005/04/2025")
+        $lastNumber = (int) substr($lastPeminjaman->kode_pinjam, 0, 4);
+        $nomorUrut = $lastNumber + 1;
+    } else {
+        $nomorUrut = 1;
     }
-    public function ShowMore()
+
+    $kode_pinjam = str_pad($nomorUrut, 4, '0', STR_PAD_LEFT) . '/' . str_pad($bulan, 2, '0', STR_PAD_LEFT) . '/' . $tahun;
+
+    // Simpan data peminjaman
+    Peminjaman::create([
+        'user_id' => Auth::id(),
+        'buku_id' => $buku->id,
+        'kode_pinjam' => $kode_pinjam,
+        'tanggal_pinjam' => Carbon::now(),
+        'tanggal_kembali' => Carbon::now()->addDays(10),
+        'status' => 'dipinjam',
+    ]);
+
+    // Kurangi stok buku
+    $buku->decrement('stok');
+
+    return back()->with('success', 'Buku berhasil dipinjam.');
+}
+
+public function ShowMore()
 {
     
     return view('user.showmore');

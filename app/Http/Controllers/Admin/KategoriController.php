@@ -67,7 +67,7 @@ class KategoriController extends Controller
             'nama' => $request->nama,
         ]);
 
-        return redirect()->route('kategoris.index')->with('successupdate', 'kategori berhasil diupdate!');
+        return redirect()->route('kategoris.index')->with('success', 'kategori berhasil diupdate!');
         
     }
 

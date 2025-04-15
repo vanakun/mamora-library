@@ -47,17 +47,20 @@
                 <input type="file" name="file" id="importExcel" accept=".xlsx, .xls" onchange="document.getElementById('excelImportForm').submit();">
             </form>
 
-            <!-- Alert Messages -->
+           
             @if(session('success'))
-                <div class="mb-4 px-4 py-3 rounded bg-green-100 text-green-800 border border-green-300">
-                    {{ session('success') }}
-                </div>
-            @endif
+            <div id="success-alert" class="mb-4 px-4 py-3 rounded bg-green-100 text-green-800 border border-green-300">
+                {{ session('success') }}
+            </div>
 
-            @if(session('error'))
-                <div class="mb-4 px-4 py-3 rounded bg-red-100 text-red-800 border border-red-300">
-                    {{ session('error') }}
-                </div>
+            <script>
+                setTimeout(function() {
+                    const alert = document.getElementById('success-alert');
+                    if (alert) {
+                        alert.style.display = 'none';
+                    }
+                }, 3000); 
+            </script>
             @endif
 
             <!-- Table Section -->

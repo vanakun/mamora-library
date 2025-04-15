@@ -3,11 +3,20 @@
         @include('partials.sidebar')
 
         <div class="flex-1 p-6">
-            @if(session('successupdate'))
-                <div class="mb-4 px-4 py-3 rounded bg-green-100 text-green-800 border border-green-300">
-                    {{ session('successupdate') }}
-                </div>
-            @endif
+        @if(session('success'))
+            <div id="success-alert" class="mb-4 px-4 py-3 rounded bg-green-100 text-green-800 border border-green-300">
+                {{ session('success') }}
+            </div>
+
+            <script>
+                setTimeout(function() {
+                    const alert = document.getElementById('success-alert');
+                    if (alert) {
+                        alert.style.display = 'none';
+                    }
+                }, 3000); 
+            </script>
+        @endif
 
             <div id="alert-box" class="hidden mb-4 p-4 rounded text-white text-sm"></div>
 

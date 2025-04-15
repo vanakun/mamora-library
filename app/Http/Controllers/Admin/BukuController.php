@@ -10,6 +10,8 @@ use App\Models\Kategori;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\BukuImport;
 
+use Maatwebsite\Excel\HeadingRowImport;
+use Maatwebsite\Excel\Validators\ValidationException;
 
 class BukuController extends Controller
 {
@@ -173,7 +175,7 @@ class BukuController extends Controller
     }
 
     public function import(Request $request)
-{
+    {
     $request->validate([
         'file' => 'required|mimes:xls,xlsx'
     ]);
@@ -182,8 +184,6 @@ class BukuController extends Controller
 
     return redirect()->back()->with('success', 'Data berhasil diimpor.');
 
-    // Jika gagal
-    return redirect()->back()->with('error', 'Terjadi kesalahan saat mengimpor data.');
-}
+    }
 
 }
