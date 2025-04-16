@@ -1,4 +1,6 @@
 <x-app-layout>
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <div class="min-h-screen flex bg-gray-100 justify-center py-8">
         <!-- Main Content -->
         <div class="flex-1 max-w-screen-lg px-4 sm:px-6 lg:px-8">
@@ -13,6 +15,20 @@
                 </div>
             @endif
 
+            <div 
+                id="buku-modal" 
+                class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50 hidden"
+            >
+                <div class="bg-white rounded-lg shadow-xl w-96 p-6 relative">
+                    <h2 class="text-lg font-bold mb-4">Detail Buku</h2>
+                    <p><strong>Judul:</strong> <span id="modal-judul"></span></p>
+                    <p><strong>Penulis:</strong> <span id="modal-penulis"></span></p>
+                    <p><strong>Tahun Terbit:</strong> <span id="modal-tahun"></span></p>
+                   
+                    <button id="close-modal" class="absolute top-2 right-2 text-gray-600 hover:text-red-500">&times;</button>
+                </div>
+            </div>
+            
             <!-- Tabel Peminjaman -->
             <div class="mb-8 bg-white p-6 rounded-lg shadow-md">
                 <h2 class="text-xl font-semibold mb-4 text-center text-gray-800">Peminjaman Saya</h2>
@@ -25,6 +41,7 @@
                                 <th class="px-4 py-2 text-left">Tanggal Pinjam</th>
                                 <th class="px-4 py-2 text-left">Tanggal Kembali</th>
                                 <th class="px-4 py-2 text-left">Status</th>
+                                <th class="px-4 py-2 text-left">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -110,23 +127,29 @@
                     { data: 'buku.judul', name: 'buku.judul' },
                     { data: 'tanggal_pinjam', name: 'tanggal_pinjam' },
                     { data: 'tanggal_kembali', name: 'tanggal_kembali' },
-                    { data: 'status', name: 'status' }
+                    { data: 'status', name: 'status' },
+                    { data: 'action', name: 'action', orderable: false, searchable: false }
                 ]
             });
         });
-
-        function showDetailModal(id, judul, penulis, tahun_terbit, stok, deskripsi) {
-            document.getElementById('modalJudul').textContent = judul;
-            document.getElementById('modalPenulis').textContent = penulis;
-            document.getElementById('modalTahunTerbit').textContent = tahun_terbit;
-            document.getElementById('modalStok').textContent = stok;
-            document.getElementById('modalDeskripsi').textContent = deskripsi || 'Deskripsi tidak tersedia';
-
-            document.getElementById('detailModal').classList.remove('hidden');
-        }
-
-        function closeModal() {
-            document.getElementById('detailModal').classList.add('hidden');
-        }
     </script>
+     <script>
+        $(document).on('click', '.lihat-buku-btn', function () {
+            $('#modal-judul').text($(this).data('judul'));
+            $('#modal-penulis').text($(this).data('penulis'));
+            $('#modal-tahun').text($(this).data('tahun'));
+            $('#buku-modal').removeClass('hidden');
+        });
+
+        $('#close-modal').on('click', function () {
+            $('#buku-modal').addClass('hidden');
+        });
+
+        // Tutup modal saat klik di luar kontennya
+        $('#buku-modal').on('click', function (e) {
+            if (e.target === this) {
+                $(this).addClass('hidden');
+            }
+        });
+        </script>
 </x-app-layout>

@@ -30,29 +30,29 @@ class PerpustakaanController extends Controller
     public function data()
     {
         $user = Auth::user();
-
+    
         $peminjaman = Peminjaman::with('buku')
             ->where('user_id', $user->id)
             ->get();
-
+    
         return datatables()->of($peminjaman)
-            ->addColumn('tanggal_pinjam', function($pinjam) {
+            ->addColumn('tanggal_pinjam', function ($pinjam) {
                 return \Carbon\Carbon::parse($pinjam->tanggal_pinjam)->format('d-m-Y');
             })
-            ->addColumn('tanggal_kembali', function($pinjam) {
-                return $pinjam->tanggal_kembali 
-                    ? \Carbon\Carbon::parse($pinjam->tanggal_kembali)->format('d-m-Y') 
+            ->addColumn('tanggal_kembali', function ($pinjam) {
+                return $pinjam->tanggal_kembali
+                    ? \Carbon\Carbon::parse($pinjam->tanggal_kembali)->format('d-m-Y')
                     : 'Belum Kembali';
             })
             ->addColumn('status', function ($row) {
                 $status = $row->status ?? '-';
                 $color = '';
-            
-                // Ubah 'Menunggu_admin' menjadi 'Menunggu admin'
+    
+                // Format status
                 if (strtolower($status) === 'menunggu_admin') {
                     $status = 'Menunggu';
                 }
-            
+    
                 if (strtolower($status) == 'dikembalikan') {
                     $color = 'bg-green-200 text-green-800';
                 } elseif (strtolower($status) == 'dipinjam') {
@@ -62,13 +62,30 @@ class PerpustakaanController extends Controller
                 } else {
                     $color = 'bg-gray-200 text-gray-800';
                 }
-            
+    
                 return '<span class="px-3 py-1 rounded text-sm font-semibold ' . $color . '">' . ucfirst($status) . '</span>';
             })
-            ->rawColumns(['status']) // penting agar HTML-nya bisa dirender
+            ->addColumn('action', function ($row) {
+                $action = '<div class="flex flex-col md:flex-row gap-2">';
+        
+                // Show detail
+                $action .= '
+                    <button 
+                        class="lihat-buku-btn px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm transition text-center"
+                        data-judul="' . e($row->buku->judul) . '"
+                        data-penulis="' . e($row->buku->penulis) . '"
+                        data-tahun="' . e($row->buku->tahun_terbit) . '"
+                        data-deskripsi="' . e($row->buku->deskripsi) . '"
+                    >
+                        📘
+                    </button>
+                ';
+                return $action;
+            })
+            ->rawColumns(['status', 'action']) 
             ->make(true);
-            
     }
+    
 
     public function updateStatus($id)
     {
@@ -76,9 +93,9 @@ class PerpustakaanController extends Controller
         
         // Cek status dan ubah menjadi status berikutnya
         if ($peminjaman->status === 'dipinjam') {
-            $peminjaman->status = 'menunggu_admin';  // Ubah ke "Dikembalikan"
+            $peminjaman->status = 'menunggu_admin'; 
         } elseif ($peminjaman->status === 'terlambat') {
-            $peminjaman->status = 'dikembalikan';  // Ubah ke "Dikembalikan"
+            $peminjaman->status = 'dikembalikan';  
         }
 
         $peminjaman->save();

@@ -84,7 +84,7 @@
 
     <script>
         $(function () {
-            // Sisipkan filter status ke dalam wrapper yang disediakan oleh opsi 'dom'
+            // Sisipkan filter status 'dom'
             const statusFilter = `
                 <div class="mb-4 flex justify-start items-center">
                     <label for="filter-status" class="mr-2 font-semibold text-gray-700">Filter Status:</label>
@@ -134,7 +134,6 @@
                         });
                     }
 
-                    // Tambahkan kelas Tailwind CSS untuk styling
                     $('.dataTables_wrapper').addClass('p-5');
                     $('.dataTables_filter').addClass('mb-5');
                     $('.dataTables_filter input').addClass('border rounded px-3 py-1 ml-2 focus:outline-none focus:ring focus:border-blue-300');
